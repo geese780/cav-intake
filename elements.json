@@ -1,5 +1,13 @@
 [
   {
+    "name": "element_2",
+    "department": "Audio"
+  },
+  {
+    "name": "element_5",
+    "department": "Automation"
+  },
+  {
     "name": "New Element",
     "department": "Lighting"
   },
@@ -10,5 +18,13 @@
   {
     "name": "testing_1",
     "department": "Lighting"
+  },
+  {
+    "name": "element_4",
+    "department": "Staging"
+  },
+  {
+    "name": "element_3",
+    "department": "Video"
   }
 ]
