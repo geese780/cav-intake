@@ -12,7 +12,7 @@ exports.handler = async (event) => {
     if (!payload_raw) {
       const trigger_id = body.get('trigger_id');
 
-      fetch('https://slack.com/api/views.open', {
+      await fetch('https://slack.com/api/views.open', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${SLACK_USER_TOKEN}`,
@@ -62,9 +62,8 @@ exports.handler = async (event) => {
             ]
           }
         })
-      }).catch(err => console.error('Modal open error:', err));
+      });
 
-      // Respond immediately to Slack
       return { statusCode: 200, body: '' };
     }
 
@@ -76,66 +75,53 @@ exports.handler = async (event) => {
       const elementName = values.element_name.element_name_input.value;
       const department = values.department.department_select.selected_option.value;
 
-      // Acknowledge Slack immediately — do GitHub work after
-      const githubWork = async () => {
-        try {
-          const getRes = await fetch(
-            `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/elements.json`,
-            {
-              headers: {
-                'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json'
-              }
-            }
-          );
-
-          let elements = [];
-          let sha = null;
-
-          if (getRes.ok) {
-            const fileData = await getRes.json();
-            sha = fileData.sha;
-            elements = JSON.parse(Buffer.from(fileData.content, 'base64').toString());
+      // Get current elements.json
+      const getRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/elements.json`,
+        {
+          headers: {
+            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github.v3+json'
           }
-
-          elements.push({ name: elementName, department });
-          elements.sort((a, b) => {
-            if (a.department !== b.department) return a.department.localeCompare(b.department);
-            return a.name.localeCompare(b.name);
-          });
-
-          const updateRes = await fetch(
-            `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/elements.json`,
-            {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: `Add element: ${elementName} (${department})`,
-                content: Buffer.from(JSON.stringify(elements, null, 2)).toString('base64'),
-                ...(sha && { sha })
-              })
-            }
-          );
-
-          if (updateRes.ok) {
-            console.log(`Successfully added: ${elementName} (${department})`);
-          } else {
-            const err = await updateRes.json();
-            console.error('GitHub write error:', JSON.stringify(err));
-          }
-        } catch (err) {
-          console.error('GitHub work error:', err.message);
         }
-      };
+      );
 
-      // Fire and forget — don't await
-      githubWork();
+      let elements = [];
+      let sha = null;
 
-      // Return immediately to Slack
+      if (getRes.ok) {
+        const fileData = await getRes.json();
+        sha = fileData.sha;
+        elements = JSON.parse(Buffer.from(fileData.content, 'base64').toString());
+      }
+
+      // Add and sort
+      elements.push({ name: elementName, department });
+      elements.sort((a, b) => {
+        if (a.department !== b.department) return a.department.localeCompare(b.department);
+        return a.name.localeCompare(b.name);
+      });
+
+      // Write to GitHub
+      await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/elements.json`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Add element: ${elementName} (${department})`,
+            content: Buffer.from(JSON.stringify(elements, null, 2)).toString('base64'),
+            ...(sha && { sha })
+          })
+        }
+      );
+
+      console.log(`Added: ${elementName} (${department})`);
+
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
