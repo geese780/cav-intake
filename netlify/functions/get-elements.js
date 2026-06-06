@@ -2,8 +2,8 @@ exports.handler = async (event) => {
   try {
     const SLACK_USER_TOKEN = process.env.SLACK_USER_TOKEN;
 
-    // First let's see what we can get from the lists API
-    const res = await fetch(`https://slack.com/api/lists.getList?list_id=F0AD8RUFQ7M`, {
+    // Try fetching the list as a file
+    const res = await fetch(`https://slack.com/api/files.info?file=F0AD8RUFQ7M`, {
       headers: {
         'Authorization': `Bearer ${SLACK_USER_TOKEN}`,
         'Content-Type': 'application/json'
@@ -11,7 +11,7 @@ exports.handler = async (event) => {
     });
 
     const data = await res.json();
-    console.log('Lists API response:', JSON.stringify(data, null, 2));
+    console.log('Files API response:', JSON.stringify(data, null, 2));
 
     return {
       statusCode: 200,
