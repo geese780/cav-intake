@@ -1,22 +1,34 @@
 exports.handler = async (event) => {
   try {
-    const SLACK_USER_TOKEN = process.env.SLACK_USER_TOKEN;
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER;
+    const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
 
-    // Try fetching the list as a file
-    const res = await fetch(`https://slack.com/api/files.info?file=F0AD8RUFQ7M`, {
-      headers: {
-        'Authorization': `Bearer ${SLACK_USER_TOKEN}`,
-        'Content-Type': 'application/json'
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/elements.json`,
+      {
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
       }
-    });
+    );
 
-    const data = await res.json();
-    console.log('Files API response:', JSON.stringify(data, null, 2));
+    if (!res.ok) {
+      return {
+        statusCode: 200,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify([])
+      };
+    }
+
+    const fileData = await res.json();
+    const elements = JSON.parse(Buffer.from(fileData.content, 'base64').toString());
 
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(elements)
     };
 
   } catch (err) {

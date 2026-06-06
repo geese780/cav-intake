@@ -148,6 +148,7 @@
   }
 
   select option { background: var(--mid); color: var(--white); }
+  select optgroup { background: var(--mid); color: var(--accent); }
   textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
   .file-upload-area {
@@ -296,21 +297,7 @@
         <div class="field">
           <label>Project Element <span class="required">*</span></label>
           <select id="projectElement" required>
-            <option value="" disabled selected>Select element...</option>
-            <option>Main Stage — Deck Structure</option>
-            <option>Main Stage — Roof</option>
-            <option>Main Stage — Towers</option>
-            <option>B Stage — Deck Structure</option>
-            <option>B Stage — Roof</option>
-            <option>LED Wall — Main</option>
-            <option>LED Wall — Side</option>
-            <option>Rigging — FOH</option>
-            <option>Rigging — Stage</option>
-            <option>Projection — System</option>
-            <option>Automation — Flying</option>
-            <option>Automation — Tracking</option>
-            <option>Ground Support</option>
-            <option>Other</option>
+            <option value="" disabled selected>Loading elements...</option>
           </select>
         </div>
 
@@ -379,6 +366,48 @@
 
 <script>
   const PROJECT_NAME = 'Tait CAV Internal Testing';
+
+  // Load elements dynamically
+  async function loadElements() {
+    try {
+      const res = await fetch('/.netlify/functions/get-elements');
+      const elements = await res.json();
+      const select = document.getElementById('projectElement');
+      select.innerHTML = '<option value="" disabled selected>Select element...</option>';
+
+      if (!elements.length) {
+        select.innerHTML = '<option value="" disabled selected>No elements found</option>';
+        return;
+      }
+
+      // Group by department
+      const grouped = elements.reduce((acc, el) => {
+        if (!acc[el.department]) acc[el.department] = [];
+        acc[el.department].push(el.name);
+        return acc;
+      }, {});
+
+      // Build grouped options
+      Object.keys(grouped).sort().forEach(dept => {
+        const group = document.createElement('optgroup');
+        group.label = dept;
+        grouped[dept].forEach(name => {
+          const option = document.createElement('option');
+          option.value = `${dept} — ${name}`;
+          option.textContent = name;
+          group.appendChild(option);
+        });
+        select.appendChild(group);
+      });
+
+    } catch (err) {
+      console.error('Failed to load elements:', err);
+      const select = document.getElementById('projectElement');
+      select.innerHTML = '<option value="" disabled selected>Failed to load elements</option>';
+    }
+  }
+
+  loadElements();
 
   const form         = document.getElementById('intakeForm');
   const fileInput    = document.getElementById('fileInput');
@@ -485,6 +514,7 @@
       setStatus('success', `✓ Submission complete — ${file.name} uploaded and production team notified.`);
       form.reset();
       fileName.style.display = 'none';
+      loadElements();
 
     } catch (err) {
       setStatus('error', `Submission failed: ${err.message}. Please try again or contact your project lead.`);
