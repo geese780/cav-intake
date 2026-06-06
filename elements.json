@@ -1,5 +1,9 @@
 [
   {
+    "name": "element_2",
+    "department": "Audio"
+  },
+  {
     "name": "New Element",
     "department": "Lighting"
   },
