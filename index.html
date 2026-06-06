@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clear All Visuals — File Submission</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f4f0;
+    --accent: #e8ff47;
+    --mid: #1a1a1a;
+    --border: #2a2a2a;
+    --muted: #555;
+    --success: #47ffb2;
+    --error: #ff4747;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.15em; color: var(--white); }
+  .logo span { color: var(--accent); }
+
+  .project-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.8rem;
+  }
+
+  .hero { padding: 4rem 3rem 2rem; border-bottom: 1px solid var(--border); }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero p { font-size: 0.9rem; color: var(--muted); max-width: 480px; line-height: 1.7; }
+
+  main { flex: 1; display: grid; grid-template-columns: 1fr 2fr; }
+
+  .sidebar {
+    padding: 3rem;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .sidebar-section h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-section p { font-size: 0.8rem; color: var(--muted); line-height: 1.7; }
+  .doc-types { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .doc-type-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .doc-type-item::before { content: '—'; color: var(--accent); }
+  .form-area { padding: 3rem; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; }
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  label .required { color: var(--accent); margin-left: 0.2rem; }
+
+  input, select, textarea {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  select option { background: var(--mid); color: var(--white); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+  .file-upload-area {
+    border: 1px dashed var(--border);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+
+  .file-upload-area:hover, .file-upload-area.dragover {
+    border-color: var(--accent);
+    background: rgba(232, 255, 71, 0.03);
+  }
+
+  .file-upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+  }
+
+  .upload-icon { font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--muted); }
+  .upload-text { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+  .upload-text strong { color: var(--accent); }
+  .file-name { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem; display: none; }
+
+  .form-divider { grid-column: 1 / -1; height: 1px; background: var(--border); margin: 0.5rem 0; }
+
+  .submit-row { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; }
+  .submit-note { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; }
+
+  button[type="submit"] {
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    padding: 0.9rem 2.5rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+
+  button[type="submit"]:hover { opacity: 0.9; }
+  button[type="submit"]:active { transform: scale(0.98); }
+  button[type="submit"]:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status-bar {
+    display: none;
+    grid-column: 1 / -1;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    border-left: 3px solid;
+  }
+
+  .status-bar.success { display: block; border-color: var(--success); background: rgba(71, 255, 178, 0.05); color: var(--success); }
+  .status-bar.error { display: block; border-color: var(--error); background: rgba(255, 71, 71, 0.05); color: var(--error); }
+  .status-bar.loading { display: block; border-color: var(--accent); background: rgba(232, 255, 71, 0.05); color: var(--accent); }
+
+  .progress-wrap { display: none; grid-column: 1 / -1; height: 2px; background: var(--border); overflow: hidden; }
+  .progress-wrap.active { display: block; }
+  .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+
+  footer {
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-text { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--border); }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem; }
+    .form-area { padding: 2rem; }
+    header { padding: 1.5rem 2rem; }
+    .hero { padding: 2rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: 1; }
+    footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CLEAR ALL<span>.</span>VISUALS</div>
+  <div class="project-badge">File Intake — Tait CAV Internal Testing</div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">Secure File Submission Portal</div>
+  <h1>SUBMIT<br>YOUR FILES</h1>
+  <p>All project deliverables must be submitted through this portal. Complete all required fields so your submission can be properly logged and the right people notified immediately.</p>
+</div>
+
+<main>
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3>How It Works</h3>
+      <p>Fill in the form, attach your file, and submit. Your file will be logged to the project vault and the production team will be notified immediately with full context.</p>
+    </div>
+    <div class="sidebar-section">
+      <h3>Accepted Document Types</h3>
+      <div class="doc-types">
+        <div class="doc-type-item">Technical Document</div>
+        <div class="doc-type-item">Engineering Report</div>
+        <div class="doc-type-item">Engineering Stamp</div>
+        <div class="doc-type-item">Structural Drawing</div>
+        <div class="doc-type-item">Vendor Specification</div>
+        <div class="doc-type-item">Load Data</div>
+        <div class="doc-type-item">Risk Assessment</div>
+        <div class="doc-type-item">Other</div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <h3>Questions?</h3>
+      <p>Contact your Clear All Visuals project lead directly. Do not email files — all submissions must come through this portal.</p>
+    </div>
+  </aside>
+
+  <div class="form-area">
+    <form id="intakeForm">
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Submitted By <span class="required">*</span></label>
+          <input type="text" id="submittedBy" placeholder="Your full name" required>
+        </div>
+
+        <div class="field">
+          <label>Company / Team <span class="required">*</span></label>
+          <input type="text" id="company" placeholder="Your company or team name" required>
+        </div>
+
+        <div class="field">
+          <label>Project Element <span class="required">*</span></label>
+          <select id="projectElement" required>
+            <option value="" disabled selected>Select element...</option>
+            <option>Main Stage — Deck Structure</option>
+            <option>Main Stage — Roof</option>
+            <option>Main Stage — Towers</option>
+            <option>B Stage — Deck Structure</option>
+            <option>B Stage — Roof</option>
+            <option>LED Wall — Main</option>
+            <option>LED Wall — Side</option>
+            <option>Rigging — FOH</option>
+            <option>Rigging — Stage</option>
+            <option>Projection — System</option>
+            <option>Automation — Flying</option>
+            <option>Automation — Tracking</option>
+            <option>Ground Support</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Document Type <span class="required">*</span></label>
+          <select id="documentType" required>
+            <option value="" disabled selected>Select type...</option>
+            <option>Technical Document</option>
+            <option>Engineering Report</option>
+            <option>Engineering Stamp</option>
+            <option>Structural Drawing</option>
+            <option>Vendor Specification</option>
+            <option>Load Data</option>
+            <option>Risk Assessment</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Version <span class="required">*</span></label>
+          <input type="text" id="version" placeholder="e.g. v1, v2, Rev A" required>
+        </div>
+
+        <div class="field">
+          <label>Supersedes / Related To</label>
+          <input type="text" id="supersedes" placeholder="e.g. v1 submitted 2026-05-12">
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="field full">
+          <label>File Attachment <span class="required">*</span></label>
+          <div class="file-upload-area" id="uploadArea">
+            <input type="file" id="fileInput" required>
+            <div class="upload-icon">↑</div>
+            <div class="upload-text">Drop file here or <strong>browse</strong></div>
+            <div class="file-name" id="fileName"></div>
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>Notes</label>
+          <textarea id="notes" placeholder="Any additional context, special instructions, or flags for the production team..."></textarea>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="status-bar" id="statusBar"></div>
+
+        <div class="submit-row">
+          <div class="submit-note">All fields marked * are required</div>
+          <button type="submit" id="submitBtn">Submit File</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-text">Clear All Visuals — Internal Production Portal</div>
+  <div class="footer-text">All submissions are logged and timestamped</div>
+</footer>
+
+<script>
+  const PROJECT_NAME = 'Tait CAV Internal Testing';
+
+  const form         = document.getElementById('intakeForm');
+  const fileInput    = document.getElementById('fileInput');
+  const fileName     = document.getElementById('fileName');
+  const uploadArea   = document.getElementById('uploadArea');
+  const submitBtn    = document.getElementById('submitBtn');
+  const statusBar    = document.getElementById('statusBar');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar  = document.getElementById('progressBar');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) {
+      fileName.textContent = fileInput.files[0].name;
+      fileName.style.display = 'block';
+    }
+  });
+
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    fileInput.files = e.dataTransfer.files;
+    if (fileInput.files[0]) {
+      fileName.textContent = fileInput.files[0].name;
+      fileName.style.display = 'block';
+    }
+  });
+
+  function setStatus(type, msg) {
+    statusBar.className = `status-bar ${type}`;
+    statusBar.textContent = msg;
+  }
+
+  function setProgress(pct) {
+    progressWrap.classList.toggle('active', pct > 0 && pct < 100);
+    progressBar.style.width = pct + '%';
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const file           = fileInput.files[0];
+    const submittedBy    = document.getElementById('submittedBy').value.trim();
+    const company        = document.getElementById('company').value.trim();
+    const projectElement = document.getElementById('projectElement').value;
+    const documentType   = document.getElementById('documentType').value;
+    const version        = document.getElementById('version').value.trim();
+    const supersedes     = document.getElementById('supersedes').value.trim();
+    const notes          = document.getElementById('notes').value.trim();
+
+    if (!file) { setStatus('error', 'Please attach a file before submitting.'); return; }
+
+    submitBtn.disabled = true;
+    setStatus('loading', 'Uploading file to project vault...');
+    setProgress(10);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('submittedBy', submittedBy);
+      formData.append('company', company);
+      formData.append('projectElement', projectElement);
+      formData.append('documentType', documentType);
+      formData.append('version', version);
+      formData.append('supersedes', supersedes);
+      formData.append('notes', notes);
+      formData.append('projectName', PROJECT_NAME);
+
+      const uploadRes = await fetch('/.netlify/functions/upload-dropbox', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json();
+        throw new Error(err.error || 'Upload failed');
+      }
+
+      const uploadData = await uploadRes.json();
+      setProgress(70);
+      setStatus('loading', 'Notifying production team...');
+
+      const slackRes = await fetch('/.netlify/functions/notify-slack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          submittedBy,
+          company,
+          projectElement,
+          documentType,
+          version,
+          supersedes,
+          notes,
+          fileName: file.name,
+          dropboxPath: uploadData.dropboxPath,
+          projectName: PROJECT_NAME
+        })
+      });
+
+      if (!slackRes.ok) throw new Error('Slack notification failed');
+
+      setProgress(100);
+      setStatus('success', `✓ Submission complete — ${file.name} uploaded and production team notified.`);
+      form.reset();
+      fileName.style.display = 'none';
+
+    } catch (err) {
+      setStatus('error', `Submission failed: ${err.message}. Please try again or contact your project lead.`);
+      console.error(err);
+    } finally {
+      submitBtn.disabled = false;
+      setTimeout(() => setProgress(0), 1000);
+    }
+  });
+</script>
+</body>
+</html>
