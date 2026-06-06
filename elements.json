@@ -14,5 +14,9 @@
   {
     "name": "testing_1",
     "department": "Lighting"
+  },
+  {
+    "name": "element_3",
+    "department": "Video"
   }
 ]
