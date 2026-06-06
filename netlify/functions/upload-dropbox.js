@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   
     try {
       const DROPBOX_ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
-      const DROPBOX_FOLDER = '/cav_intake_testing/tait-cav-internal-testing/incoming';
+      const DROPBOX_FOLDER = '/cav_intake_v2/tait-cav-internal-testing/incoming';
   
       const boundary = event.headers['content-type'].split('boundary=')[1];
       const body = Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8');
