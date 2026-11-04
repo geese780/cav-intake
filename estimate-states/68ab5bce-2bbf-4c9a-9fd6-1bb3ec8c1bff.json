@@ -1,0 +1,108 @@
+{
+  "parsed": {
+    "intent": "estimate",
+    "artist": "Coldplay",
+    "show_or_scope_name": "MOTS Previz April",
+    "year": "2027",
+    "contact_hint": "The Playground",
+    "entity_hint": "The Playground",
+    "end_date": null,
+    "studio_location_hint": "WeHo Studio 1",
+    "studio_dates_hint": "April 21 to May 4 2027",
+    "studio_date_start": "2027-04-21",
+    "studio_date_end": "2027-05-04",
+    "notes": "Estimate is based upon having a separate programming station for Shaheem, Griff, Josh and Lasers. Disguise server is a placeholder if CAV needs to provide. \nEstimate is also accounting for CAV to source all MA3 Console needs.",
+    "scope_items": [
+      "14 Days Of Previz",
+      "Hardware Rental - MA3 Fullsize",
+      "Hardware Rental - Disguise Server",
+      "Hardware Rental - 2x Depence Servers"
+    ],
+    "price_overrides": [
+      {
+        "scope_item": "Hardware Rental - MA3 Fullsize",
+        "price": 4000
+      },
+      {
+        "scope_item": "Hardware Rental - Disguise Server",
+        "price": 11000
+      },
+      {
+        "scope_item": "Hardware Rental - 2x Depence Servers",
+        "price": 8000
+      }
+    ],
+    "onsite_weeks": null,
+    "onsite_days": 14
+  },
+  "requestText": "",
+  "entity": null,
+  "contactEmail": "clare@theplayground.live",
+  "contactName": null,
+  "overrides": {
+    "Rec0CDVT167MW__0": {
+      "included": true,
+      "price": 4000,
+      "label": "MA3 Fullsize // Lighting"
+    },
+    "Rec0CDVT167MW__1": {
+      "included": true,
+      "price": 11000,
+      "label": "Disguise Server"
+    },
+    "Rec0CDVT167MW__2": {
+      "included": true,
+      "price": 10000,
+      "label": "3x Depence Servers"
+    },
+    "Rec0CC33WGAF6": {
+      "included": false
+    },
+    "Rec0CBJ1Q8XCP": {
+      "included": false
+    },
+    "Rec0CCTPU0XJL": {
+      "included": false
+    },
+    "Rec0CC33WGGPN": {
+      "included": false
+    },
+    "Rec0CC594L11Q": {
+      "included": true,
+      "quantity": 14,
+      "price": 1000
+    },
+    "Rec0CC19UQRJ5": {
+      "included": false
+    },
+    "Rec0CBJ1QCU6T": {
+      "included": false
+    },
+    "Rec0CDVT167MW__3": {
+      "included": true,
+      "price": 8000,
+      "label": "2x MA3 Light // Video & SFX"
+    },
+    "Rec0CDVT167MW__4": {
+      "included": true,
+      "price": 5000,
+      "label": "4x GMA3 PU-M's"
+    }
+  },
+  "studioRoom": "WeHo Nashville VizLab 1",
+  "createAnyway": false,
+  "channel": "C0BN2Q2J63W",
+  "messageTs": "1793455138.293969",
+  "dealId": "4457077",
+  "serviceIds": [
+    "17961140",
+    "17961141",
+    "17961142",
+    "17961143",
+    "17961144",
+    "17961145"
+  ],
+  "companyId": "797878",
+  "contactId": null,
+  "sentAt": null
+}
